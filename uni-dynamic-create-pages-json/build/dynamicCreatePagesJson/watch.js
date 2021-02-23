@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const chokidar = require('chokidar')
 
-class watchFileChange {
+class WatchFileChange {
   constructor() {
     // 需要监听的目录
     this.dirArr = [
@@ -48,4 +48,4 @@ class watchFileChange {
   }
 }
 
-module.exports = new watchFileChange()
+module.exports = new WatchFileChange()
