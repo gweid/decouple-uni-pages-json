@@ -79,6 +79,7 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-plugin-import": "^1.11.0",
+    "chokidar": "^3.5.1",
     "cross-env": "^7.0.2",
     "jest": "^25.4.0",
     "mini-types": "*",
