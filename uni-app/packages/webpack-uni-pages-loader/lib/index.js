@@ -69,7 +69,7 @@ module.exports = function (content, map) {
   // webpack-loader 的 addDependency 的作用：给当前处理文件添加依赖文件，依赖发送变化时，会重新调用 loader 处理该文件
   this.addDependency(pagesJsonJsPath)
 
-  // 开放出去一个 loader 钩子，里面有一个方法 addDependency，用来告诉 webpack，pages.js还 依赖了哪些文件，这样对依赖的文件也可以实行热重载
+  // 开放出去一个 loader 钩子，里面有一个方法 addDependency，用来告诉 webpack，pages.js 还依赖了哪些文件，这样对依赖的文件也可以实行热重载
   const pagesJson = parsePagesJson(content, {
     addDependency: (file) => {
       (process.UNI_PAGES_DEPS || (process.UNI_PAGES_DEPS = new Set())).add(normalizePath(file))
