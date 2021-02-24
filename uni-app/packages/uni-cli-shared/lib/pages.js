@@ -52,13 +52,14 @@ function filterPages (pages = [], root) {
 
 const pagesJsonJsFileName = 'pages.js'
 
-// 处理页面 json
+// 处理好 pagesJson 再返回
 function processPagesJson (pagesJson, loader = {
   addDependency: function () {}
 }) {
   const pagesJsonJsPath = path.resolve(process.env.UNI_INPUT_DIR, pagesJsonJsFileName)
   if (fs.existsSync(pagesJsonJsPath)) {
     delete require.cache[pagesJsonJsPath]
+    // 从 pagesJsonJsPath 引入 pages.js
     const pagesJsonJsFn = require(pagesJsonJsPath)
     if (typeof pagesJsonJsFn === 'function') {
       pagesJson = pagesJsonJsFn(pagesJson, loader)

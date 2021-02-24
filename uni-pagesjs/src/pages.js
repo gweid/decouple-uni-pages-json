@@ -1,5 +1,5 @@
-// 使用 uni-pages-hot-modules 简化热更新
-global.hotRequire = require('uni-pages-hot-modules')
+// 使用 uni-pages-hot-modules 简化手动添加依赖
+const hotRequire = require('uni-pages-hot-modules')
 
 // function hotRequire(path, pagesJson, loader) {
 //   loader.addDependency((require.resolve(path)))
@@ -9,13 +9,16 @@ global.hotRequire = require('uni-pages-hot-modules')
 // }
 
 module.exports = function(pagesJson, loader) {
-  hotRequire(loader)
+  // hotRequire(loader)
 
-  // loader.addDependency((require.resolve('./pages.js')))
-  // delete require.cache[require.resolve('./pages.js')]
+  loader.addDependency((require.resolve('./pages.js')))
+  delete require.cache[require.resolve('./pages.js')]
 
-  // loader.addDependency((require.resolve('./pages/detail/config/router.js')))
-  // delete require.cache[require.resolve('./pages/detail/config/router.js')]
+  loader.addDependency((require.resolve('./pages/detail/config/router.js')))
+  delete require.cache[require.resolve('./pages/detail/config/router.js')]
+
+  loader.addDependency((require.resolve('./pages/about/config/router.js')))
+  delete require.cache[require.resolve('./pages/about/config/router.js')]
 
   const pages = [
     {
@@ -33,9 +36,12 @@ module.exports = function(pagesJson, loader) {
   ]
 
   const subPackages = [
+    ...require('./pages/detail/config/router.js')(pagesJson,loader),
+    ...require('./pages/about/config/router.js')(pagesJson,loader),
     // ...hotRequire('./pages/detail/config/router.js', pagesJson, loader)
-    ...hotRequire('./pages/detail/config/router.js')(),
-    ...hotRequire('./pages/about/config/router.js')()
+
+    // ...hotRequire('./pages/detail/config/router.js')(),
+    // ...hotRequire('./pages/about/config/router.js')()
   ]
 
   return {

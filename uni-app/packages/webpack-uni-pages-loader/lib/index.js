@@ -49,6 +49,7 @@ module.exports = function (content, map) {
   //   }
   // })
 
+  // 下面三种情况使用 ./index-new.js
   if (
     process.env.UNI_USING_COMPONENTS ||
     process.env.UNI_PLATFORM === 'h5' ||
@@ -64,8 +65,11 @@ module.exports = function (content, map) {
   const manifestJson = parseManifestJson(fs.readFileSync(manifestJsonPath, 'utf8'))
 
   this.addDependency(manifestJsonPath)
+  // loader 用到了外部资源 pagesJsonJsPath，那么需要声明这些外部资源的信息，用于在监控模式（watch mode）下验证可缓存的 loder 以及重新编译
+  // webpack-loader 的 addDependency 的作用：给当前处理文件添加依赖文件，依赖发送变化时，会重新调用 loader 处理该文件
   this.addDependency(pagesJsonJsPath)
 
+  // 开放出去一个 loader 钩子，里面有一个方法 addDependency，用来告诉 webpack，pages.js还 依赖了哪些文件，这样对依赖的文件也可以实行热重载
   const pagesJson = parsePagesJson(content, {
     addDependency: (file) => {
       (process.UNI_PAGES_DEPS || (process.UNI_PAGES_DEPS = new Set())).add(normalizePath(file))
