@@ -52,15 +52,17 @@ function filterPages (pages = [], root) {
 
 const pagesJsonJsFileName = 'pages.js'
 
-// 处理页面 json
+// 处理好 pagesJson 再返回
 function processPagesJson (pagesJson, loader = {
   addDependency: function () {}
 }) {
   const pagesJsonJsPath = path.resolve(process.env.UNI_INPUT_DIR, pagesJsonJsFileName)
   if (fs.existsSync(pagesJsonJsPath)) {
     delete require.cache[pagesJsonJsPath]
+    // 从 pagesJsonJsPath 引入 pages.js，pages.js 中导出的是一个函数
     const pagesJsonJsFn = require(pagesJsonJsPath)
     if (typeof pagesJsonJsFn === 'function') {
+      // 执行这个函数，生成基本的路由配置
       pagesJson = pagesJsonJsFn(pagesJson, loader)
       if (!pagesJson) {
         console.error(`${pagesJsonJsFileName}  必须返回一个 json 对象`)
