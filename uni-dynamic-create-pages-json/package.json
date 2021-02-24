@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm run dev:mp-weixin",
     "dev:pages": "node build/dynamicCreatePagesJson/watch.js startWatch",
-    "build:pages": "node build/dynamicCreatePagesJson/create.js && npm run dev:mp-weixin",
+    "build:pages": "node build/dynamicCreatePagesJson/index.js && npm run build:mp-weixin",
     "serve": "npm run dev:h5",
     "build": "npm run build:h5",
     "build:app-plus": "cross-env NODE_ENV=production UNI_PLATFORM=app-plus vue-cli-service uni-build",

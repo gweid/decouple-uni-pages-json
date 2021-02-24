@@ -1,1 +1,46 @@
-{"pages":[{"path":"pages/index/index","style":{"navigationBarTitleText":"home"}},{"path":"pages/mine/mine","style":{"navigationBarTitleText":"mine"}}],"subPackages":[{"root":"pages/detail","pages":[{"path":"detail","style":{"navigationBarTitleText":"detail"}},{"path":"reportDetail","style":{"navigationBarTitleText":"reportDetail"}}]},{}]}
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "home"
+      }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "mine"
+      }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "pages/detail",
+      "pages": [
+        {
+          "path": "detail",
+          "style": {
+            "navigationBarTitleText": "detail"
+          }
+        },
+        {
+          "path": "reportDetail",
+          "style": {
+            "navigationBarTitleText": "reportDetail"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/about",
+      "pages": [
+        {
+          "path": "about",
+          "style": {
+            "navigationBarTitleText": "about"
+          }
+        }
+      ]
+    }
+  ]
+}
