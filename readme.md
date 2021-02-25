@@ -2,6 +2,8 @@
 
 
 
+
+
 #### pages.json 痛点
 
 1. 主包、分包、还有一些配置项相互混合，模块化困难，难以移植；而且一旦项目页面开始变多，pages.json 文件将变得十分庞大，增加维护成本
@@ -9,9 +11,13 @@
 
 
 
+
+
 #### 理想状态
 
 pages 文件夹为各模块的根目录，其中一个文件夹就是一个模块，里面包含视图层，逻辑层，私有路由配置文件。各功能模块的私有化配置，仅局限在各自的目录下，不与框架目录产生耦合关系。各开发人员的工作空间仅限于当前模块的工作目录。
+
+
 
 
 
@@ -225,5 +231,209 @@ module.exports = function(pagesJson, loader) {
 
 
 
+
+
 #### node 监听文件变化动态生成 pages.json
 
+
+
+**基本结构和使用**
+
+```css
+src
+├── src
+│   ├── about
+│   │   ├── config
+│   │   │    ├── router.js
+│   │   └── about.vue
+│   ├── detail
+│   │   ├── config
+│   │   │    ├── router.js
+│   │   └── detail.vue
+├── App.vue
+├── main.js
+├── pages.json
+├── routerConfig.js // 主包路由、全局信息
+├── package-lock.json
+├── package.json
+└── tsconfig.json
+```
+
+routerConfig.js 中：
+
+```
+const Detail = require('./pages/detail/config/router.js')
+const About = require('./pages/about/config/router.js')
+
+const routes = {
+  globalStyle: {
+		navigationBarTextStyle: 'black',
+		navigationBarTitleText: 'uni-app',
+		navigationBarBackgroundColor: '#F8F8F8',
+		backgroundColor: '#f5f5f5'
+	},
+  pages: [
+    {
+      path: 'pages/index/index',
+      style: {
+        navigationBarTitleText: 'home'
+      }
+    },
+    {
+      path: 'pages/mine/mine',
+      style: {
+        navigationBarTitleText: 'mine'
+      }
+    }
+  ],
+  subPackages: [
+    Detail,
+    About
+  ]
+}
+```
+
+模块下面的 router.js：
+
+```js
+module.exports = {
+  root: 'pages/detail',
+  pages: [
+    {
+      path: 'detail',
+      style: {
+        navigationBarTitleText: 'detail'
+      }
+    },
+    {
+      path: 'reportDetail',
+      style: {
+        navigationBarTitleText: 'reportDetail'
+      }
+    }
+  ]
+}
+```
+
+
+
+**node 监听**
+
+```css
+dynamicCreatePagesJson
+├── config.js // 配置
+├── create.js // 创建 pages.json
+├── watch.js  // 监听文件变动
+└── index.js
+```
+
+config.js
+
+```js
+const path = require('path')
+
+const pagesJsonPath = path.join(path.resolve(), './src/pages.json')
+const routerConfigPath = path.join(path.resolve(), './src/routerConfig.js')
+const watchFileReg = /((router\.js)|(routerConfig\.js))/
+
+module.exports = {
+  pagesJsonPath,
+  routerConfigPath,
+  watchFileReg
+}
+```
+
+- pagesJsonPath：pages.json 的路径
+- routerConfigPath：routerConfig.js 路径
+- watchFileReg：需要匹配的路由文件
+
+
+
+create.js
+
+```js
+const fs = require('fs')
+
+const { pagesJsonPath, routerConfigPath } = require('./config')
+
+function createPagesJson(tip) {
+  try {
+    const content = require(routerConfigPath)
+    fs.writeFileSync(pagesJsonPath, JSON.stringify(content, null, 2))
+
+    console.log(tip)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports = createPagesJson
+```
+
+主要就是通过 require 读取 routerConfig，然后重写 pages.json
+
+
+
+watch.js
+
+```js
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+
+const { pagesJsonPath, routerConfigPath, watchFileReg } = require('./config')
+
+const createPagesJson = require('./create')
+
+function debounce(func, wait = 1000) {
+  let timeId
+  return function () {
+    const context = this
+    const args = arguments
+    clearTimeout(timeId)
+    timeId = setTimeout(function() {
+      func.apply(context, args)
+    }, wait)
+  }
+}
+
+class WatchFileChange {
+  constructor() {
+    // 需要监听的目录
+    this.dirArr = [
+      path.join(path.resolve(), './src/pages'),
+      routerConfigPath
+    ]
+
+    this.pagesJsonPath = pagesJsonPath
+    this.routerConfigPath = routerConfigPath
+
+    this.startWatch()
+  }
+
+  startWatch() {
+    console.log('启动动态创建 pages.json 监听...')
+
+    chokidar
+      .watch(this.dirArr, {
+        ignored: /\.vue$/,
+        depth: 4 // 监听下面多少层子目录
+      })
+      .on('all', debounce((event, path) => {
+        if (path.match(watchFileReg)) {
+          // 删除 require 引用缓存
+          delete require.cache[require.resolve(path)]
+          delete require.cache[require.resolve(this.routerConfigPath)]
+
+          createPagesJson(`\n${path} 发生变化, 已重新构建 pages.json...\n`) 
+        }
+      }, 500))
+  }
+}
+
+module.exports = new WatchFileChange()
+```
+
+- 通过 chokidar 监听文件变化，然后调用 createPagesJson 重新构建 pages.json
+- debounce 防抖
+- require 引用有缓存，需要清除
