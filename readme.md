@@ -188,7 +188,40 @@ function processPagesJson (pagesJson, loader = {
 
 **使用 uni-pages-hot-modules 简化手动添加依赖**
 
+```js
+// 使用 uni-pages-hot-modules 简化手动添加依赖
+const hotRequire = require('uni-pages-hot-modules')
 
+module.exports = function(pagesJson, loader) {
+  hotRequire(loader)
+
+  const pages = [
+    {
+      path: 'pages/index/index',
+      style: {
+        navigationBarTitleText: 'home'
+      }
+    },
+    {
+      path: 'pages/mine/mine',
+      style: {
+        navigationBarTitleText: 'mine'
+      }
+    }
+  ]
+
+  const subPackages = [
+    ...hotRequire('./pages/detail/config/router.js')(),
+    ...hotRequire('./pages/about/config/router.js')()
+  ]
+
+  return {
+    ...pagesJson,
+    pages,
+    subPackages
+  }
+}
+```
 
 
 

@@ -8,6 +8,12 @@ module.exports = (pagesJson, loader) => {
           style: {
             navigationBarTitleText: 'detail'
           }
+        },
+        {
+          path: 'reportDetail',
+          style: {
+            navigationBarTitleText: 'reportDetail'
+          }
         }
       ]
     }
