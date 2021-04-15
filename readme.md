@@ -437,3 +437,27 @@ module.exports = new WatchFileChange()
 - 通过 chokidar 监听文件变化，然后调用 createPagesJson 重新构建 pages.json
 - debounce 防抖
 - require 引用有缓存，需要清除
+
+
+
+#### 利用 concurrently 启动多个命令
+
+安装：
+
+```js
+npm i concurrently -D 
+```
+
+使用：
+
+package.json:
+
+```js
+{
+  "scripts": {
+    "dev": "npm run dev:mp-weixin",
+    "dev:pages": "node build/dynamicCreatePagesJson/watch.js startWatch",
+    "start": "concurrently \"npm run dev\" \"npm run dev:pages\"",
+  }
+}
+```
