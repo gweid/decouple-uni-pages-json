@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "npm run dev:mp-weixin",
     "dev:pages": "node build/dynamicCreatePagesJson/watch.js startWatch",
+    "start": "concurrently \"npm run dev\" \"npm run dev:pages\"",
     "build:pages": "node build/dynamicCreatePagesJson/index.js && npm run build:mp-weixin",
     "serve": "npm run dev:h5",
     "build": "npm run build:h5",
@@ -80,6 +81,7 @@
     "@vue/cli-service": "~4.5.0",
     "babel-plugin-import": "^1.11.0",
     "chokidar": "^3.5.1",
+    "concurrently": "^6.0.2",
     "cross-env": "^7.0.2",
     "jest": "^25.4.0",
     "mini-types": "*",

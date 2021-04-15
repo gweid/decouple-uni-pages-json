@@ -46,7 +46,7 @@ class WatchFileChange {
           delete require.cache[require.resolve(path)]
           delete require.cache[require.resolve(this.routerConfigPath)]
 
-          createPagesJson(`\n${path} 发生变化, 已重新构建 pages.json...\n`) 
+          createPagesJson(`\n\n\n\n========${path} 发生变化, 已重新构建 pages.json...\n`) 
         }
       }, 500))
   }
