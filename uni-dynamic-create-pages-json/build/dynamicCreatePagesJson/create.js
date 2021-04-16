@@ -6,7 +6,7 @@ function createPagesJson(tip) {
   try {
     const content = require(routerConfigPath)
     fs.writeFileSync(pagesJsonPath, JSON.stringify(content, null, 2))
-
+    console.log('\n--------------------------------------------分割线----------------------------------------------')
     console.log(tip)
   } catch (error) {
     console.log(error)

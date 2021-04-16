@@ -40,13 +40,13 @@ class WatchFileChange {
         ignored: /\.vue$/,
         depth: 4 // 监听下面多少层子目录
       })
-      .on('all', debounce((event, path) => {
-        if (path.match(watchFileReg)) {
+      .on('all', debounce((event, pathUrl) => {
+        if (pathUrl.match(watchFileReg)) {
           // 删除 require 引用缓存
-          delete require.cache[require.resolve(path)]
+          delete require.cache[require.resolve(pathUrl)]
           delete require.cache[require.resolve(this.routerConfigPath)]
 
-          createPagesJson(`\n\n\n\n========${path} 发生变化, 已重新构建 pages.json...\n`) 
+          createPagesJson(`\nsrc${pathUrl.split('src')[1]} 发生变化, 已重新构建 pages.json...\n`) 
         }
       }, 500))
   }
